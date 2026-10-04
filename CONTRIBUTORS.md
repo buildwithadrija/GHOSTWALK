@@ -15,7 +15,7 @@ Contributed to development, project coordination, testing, and review.
 ## Bhumi Shah
 GitHub: @bhumishah547
 
-Contributed to testing, review, documentation, and project refinement.
+Contributed to project testing, content review, documentation verification, and project refinement.
 
 ## Sneha Goswami
 GitHub: @snehagoswami355-tech
