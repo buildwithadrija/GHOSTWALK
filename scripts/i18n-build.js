@@ -192,16 +192,30 @@ async function translateUnit(src, mtl, direct) {
         const sb = { window: {} };
         require('vm').createContext(sb);
         require('vm').runInContext(fs.readFileSync(file, 'utf8'), sb);
-        prev.pairs = sb.window.DICT_PRE[c] || [];
+        prev.pairs = (sb.window.DICT_PRE || {})[c] || [];
         prev.ghost = (sb.window.GW_GHOST_PRE || {})[c] || {};
         prev.marquee = (sb.window.MARQUEE_PRE || {})[c] || [];
-      } catch { /* regenerate from scratch */ }
+      } catch (e) {
+        /* a previous file that cannot even be parsed is reported, never
+           silently treated as empty: rebuilding from scratch over it would
+           machine-translate hundreds of already-reviewed units */
+        console.log(`  warning: could not read previous ${path.basename(file)} (${e && e.message}); will not overwrite it blindly`);
+        prev.broken = true;
+      }
     }
 
     const haveStatic = new Set(prev.pairs.map(p => L.normKey(String(p[0]).slice(0, 450))));
     const todoStatic = ghostOnly ? [] : staticUnits.filter(u => !haveStatic.has(L.normKey(String(u.src).slice(0, 450))));
-    const haveGhost = new Set(Object.keys(prev.ghost));
-    const todoGhost = ghostStrings.filter(g => !haveGhost.has(g.kind + g.key + g.i));
+    /* per-unit resume identity: each ghost unit is kind+key+index, so an array
+       entry counts per filled slot. Comparing raw map keys against composite
+       ids (as before) never matched, silently re-translating everything. */
+    const gid = (kind, key, i) => kind + ':' + key + ':' + (i == null ? '-' : i);
+    const haveGhost = new Set();
+    for (const [kk, vv] of Object.entries(prev.ghost)) {
+      if (Array.isArray(vv)) vv.forEach((x, i) => { if (x) haveGhost.add(gid('a', kk, i)); });
+      else if (vv) haveGhost.add(gid('s', kk));
+    }
+    const todoGhost = ghostStrings.filter(g => !haveGhost.has(gid(g.kind, g.key, g.i)));
     // JS-assembled marquee copy: resumed from the previous file exactly like the rest
     const marquee = (prev.marquee || []).slice();
     const todoMarquee = ghostOnly ? [] : L.MARQUEE_SRC.map((s, i) => i).filter(i => !marquee[i]);
@@ -260,6 +274,18 @@ async function translateUnit(src, mtl, direct) {
 
     const body = pairs.map(([a, b]) => `[${JSON.stringify(a)}, ${JSON.stringify(b)}],`).join('\n');
     const ghostBody = JSON.stringify(ghost, null, 0);
+    /* monotonicity: a generated file may only ever gain keys, never lose
+       them. If the previous file cannot be read, or this run produced fewer
+       keys than it had (mass machine-translation failure), keep the old file
+       and report instead of publishing a regression. */
+    const prevCount = Object.keys(prev.ghost).length;
+    const newCount = Object.keys(ghost).length;
+    if (prev.broken) { console.log(`  kept previous ${c}.js (unreadable prev file; refusing blind rewrite)`); failedTotal++; continue; }
+    if (newCount < prevCount) {
+      console.log(`  kept previous ${c}.js (${prevCount} -> ${newCount} keys would be a regression)`);
+      failedTotal++;
+      continue;
+    }
     if (ghostOnly) {
       /* Ghost keys only. Keeping this in a file of its own means a generated
          string can never reach the hand-curated static dictionary. */
