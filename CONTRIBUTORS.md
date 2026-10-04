@@ -20,4 +20,4 @@ Contributed to testing, review, documentation, and project refinement.
 ## Sneha Goswami
 GitHub: @snehagoswami355-tech
 
-Contributed to testing, content review, documentation, and final checks.
+Contributed to project testing, content review, documentation verification, and final usability checks
