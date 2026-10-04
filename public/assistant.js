@@ -103,7 +103,7 @@ qrGuideSteps: 'A sample QR image has been loaded. Review the image preview. Sele
          if a language is missing a key the Ghost says so instead of mixing
          languages inside one sentence. */
       ai_title: 'Ghost AI',
-      ai_assisted: 'AI-assisted explanation',
+      ai_assisted: 'Ghost guidance',
       ai_note: 'The Ghost receives only the information needed to explain this finding. Sensitive details are removed before AI processing.',
       ai_why_data: 'Why AI needs this',
       ai_privacy: 'Privacy',
@@ -119,7 +119,7 @@ qrGuideSteps: 'A sample QR image has been loaded. Review the image preview. Sele
       ai_working: 'Translating…',
       ai_basic: 'Showing the built-in explanation',
       ai_unavail: 'AI help is not available right now, so here is the built-in explanation instead.',
-      ai_src_ai: 'AI-assisted',
+      ai_src_ai: 'Ghost explanation',
       ai_src_basic: 'Built-in',
       ai_privacy_short: 'Sensitive details removed before AI processing',
       ai_consent_q: 'To explain this content using AI, GHOSTWALK would need to process the text after removing detected sensitive information. Continue?',

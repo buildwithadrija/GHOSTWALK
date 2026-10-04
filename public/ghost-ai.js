@@ -201,7 +201,7 @@
     const tag = document.createElement('p');
     tag.className = 'ga-ai-src';
     tag.textContent = source === 'ai' ? T('ai_src_ai') + ' · ' + T('ai_privacy_short')
-      : (T('ai_src_basic') + ' · ' + (session.lastReason ? T('ai_unavail') : ''));
+      : T('ai_src_basic');
     out.appendChild(tag);
     try { speak(text); } catch {}
   }
