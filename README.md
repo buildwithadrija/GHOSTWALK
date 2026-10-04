@@ -1,7 +1,7 @@
 # GHOSTWALK — Send a dummy. Not yourself.
 
-Live Demo: (coming after deployment)
-Repository: (coming after repository creation)
+Live Demo: https://ghostwalk.onrender.com/
+Repository: https://github.com/buildwithadrija/GHOSTWALK
 
 GHOSTWALK helps ordinary investors check something suspicious *before* acting on it: a strange message, a link, a QR code, or a payment request. Instead of opening the link or scanning the code yourself, a disposable "ghost" investor walks the journey server-side with fake data, and GHOSTWALK reports what it actually observed — redirects, payment destinations, password/OTP forms, app downloads — in plain language, in your language, by voice if you want it.
 
