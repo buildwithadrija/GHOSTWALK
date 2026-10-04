@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# secrets and local config
+.env
+.env.*
+!.env.example
+
+# runtime cache (TTS audio, rebuilt automatically)
+cache/
+
+# logs
+*.log
+npm-debug.log*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# one-off local diagnostics (never committed)
+*.tmp.js

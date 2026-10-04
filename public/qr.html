@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Decode QR / UPI — GHOSTWALK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,600;9..144,0,700;9..144,1,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html">
+      <span class="brand-ghost" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 3C9.9 3 5 7.9 5 14v11.2c0 .9 1.1 1.4 1.8.8l2.6-2.3 2.7 2.3c.5.4 1.2.4 1.7 0l2.6-2.3 2.7 2.3c.5.4 1.2.4 1.7 0l2.6-2.3 2.7 2.3c.7.6 1.8.1 1.8-.8V14C27 7.9 22.1 3 16 3Z" fill="#fff" stroke="#1A1E2C" stroke-width="1.8"/><circle cx="12.3" cy="14" r="1.7" fill="#1A1E2C"/><circle cx="19.7" cy="14" r="1.7" fill="#1A1E2C"/></svg></span>
+      <span class="brand-t"><strong data-keep="1">GHOSTWALK</strong><em>let the ghost walk it first</em></span>
+    </a>
+    <nav class="topnav">
+      <a href="message.html">Message</a>
+      <a href="ghost.html">Ghost walk</a>
+      <a href="qr.html" class="active">QR / UPI</a>
+      <a href="trusted.html">Trust</a>
+      <a href="recovery.html">I already paid</a>
+    </nav>
+    <a href="index.html" class="btn btn-paper btn-sm">← All options</a>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="kicker">📷 Payment-intent decoder · never scan it yourself</p>
+    <h1>Read the QR <em>without touching it.</em></h1>
+    <p class="lede">Paste the UPI string or VPA hiding behind a QR / “pay here” message. The ghost decodes <b>where your money would actually go</b> — name, ID, amount — before a single rupee moves.</p>
+  </div>
+</section>
+
+<section class="section page-body">
+  <div class="wrap page-grid">
+    <div class="panel reveal in">
+      <label class="lbl">UPI string / VPA <span>(long-press the QR in your gallery app, or copy from the message)</span></label>
+      <input id="inUpi" data-keep="1" data-ghost-guide="qr" data-ghost-say="g_qr_go" placeholder="upi://pay?pa=advisor995@okhdfc&pn=FastProfit&am=25000" />
+      <p class="hint">Example: <button class="linklike" id="tryUpi" data-keep="1">upi://pay?pa=fastprofit@okhdfc&amp;pn=FastProfit&amp;am=25000</button></p>
+      <button class="btn btn-red btn-block" id="btnUpi" data-ghost-guide="qr-go" data-ghost-start="qr"><span class="btn-ghost">👻</span> Decode payment intent</button>
+      <div class="qr-up" id="qrUp" style="margin-top:16px;border-top:2px dashed var(--line);padding-top:12px">
+        <label class="lbl" data-ghost-guide="qr-img">Upload QR image <span>(photo or screenshot — decoded on your device)</span></label> <button class="why" data-explain="qr-img">?</button>
+        <label class="drop" id="qrDrop">📤 Upload QR image<input type="file" id="qrFile" accept="image/png,image/jpeg,image/webp" hidden /></label>
+        <label class="drop" id="qrCam">📷 Take photo<input type="file" id="qrCamFile" accept="image/*" capture="environment" hidden /></label>
+        <p class="hint">Upload a photo or screenshot containing the QR code. GHOSTWALK will decode it without initiating a payment. …or drag and drop an image here.</p>
+        <button class="btn btn-paper btn-sm" id="btnSampleQr" style="margin-top:8px">Try sample QR</button>
+        <p class="sample-note hidden" id="qrSampleNote"></p>
+        <img id="qrImg" class="preview hidden" alt="QR preview" />
+        <div class="ga-btns hidden" id="qrPrevBtns" style="justify-content:flex-start">
+          <button class="btn btn-red btn-sm" id="qrUse">Use this image</button>
+          <button class="btn btn-paper btn-sm" id="qrChange">Choose another</button>
+          <button class="btn btn-ghostline btn-sm" id="qrRemove">Remove</button>
+        </div>
+        <div class="qr-result hidden" id="qrDecoded" style="margin-top:10px"></div>
+      </div>
+      <div class="contract" style="margin-top:14px">⚠️ A matching name is <b>not</b> proof of safety. A <b>mismatched</b> name — company says “ABC Finserv”, money goes to “Ravi K” — is a strong stop sign.</div>
+      <div class="api-line" id="apiStatus"><span class="api-dot"></span><span>Connecting…</span></div>
+    </div>
+
+    <div>
+      <div class="empty panel reveal in" id="emptyState">
+        <div class="empty-ghost">👻</div>
+        <h3>The ghost is waiting…</h3>
+        <p>Paste a UPI string. The ghost reads the destination — <b>you scan nothing.</b></p>
+      </div>
+      <div class="panel hidden" id="resultBox">
+        <div class="verdict amber"><div class="verdict-stamp">—</div><h3 class="verdict-title">—</h3><p class="verdict-sub">—</p></div>
+        <div class="ev-list"></div>
+        <div class="res-actions">
+          <button class="btn btn-paper btn-sm" id="btnVoice">🔊 Hear it</button>
+          <a class="btn btn-paper btn-sm" href="trusted.html">👪 Loop in someone I trust →</a>
+        </div>
+      </div>
+      <div class="replay hidden" id="replayBox" style="margin-top:16px">
+        <div class="replay-head"><b>👻 Ghost walk replay</b><span class="replay-meta">server-side · synthetic data only</span></div>
+        <div class="journey"><div class="journey-ghost">👻</div><div class="journey-line"></div></div>
+        <ol class="glog"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><p class="foot-base">“Send a dummy. Not yourself.” 👻 · Helpline <b>1930</b> · cybercrime.gov.in · <a href="index.html" style="color:#FFE9B8">Home</a></p></div></footer>
+
+<script src="common.js"></script>
+<script src="jsqr.min.js"></script>
+<script src="dict-hi.js"></script>
+<script src="dict-bn.js"></script>
+<script src="dict-mr.js"></script>
+<script src="dict-ta.js"></script>
+<script src="dict-te.js"></script>
+<script src="marquee-pre.js"></script>
+<script src="i18n.js"></script>
+<script src="assistant.js"></script>
+<script src="ghost-ai.js"></script>
+<script>
+initChrome(); initApi($('#apiStatus'));
+$('#tryUpi').addEventListener('click', () => { $('#inUpi').value = 'upi://pay?pa=fastprofit@okhdfc&pn=FastProfit&am=25000'; });
+
+/* ── QR image upload: preview → on-device decode → inspect, never pay ── */
+const QR_MAX = 8 * 1024 * 1024;
+let _qrFile = null, _qrUrl = null;
+const T = (k, fb) => { try { if (window.__tr) { const v = window.__tr(k); if (typeof v === 'string' && v.trim()) return v; } } catch {} return fb; };
+function qrReset() {
+  _qrFile = null;
+  try { if (_qrUrl) URL.revokeObjectURL(_qrUrl); } catch {}
+  _qrUrl = null;
+  try { $('#qrFile').value = ''; $('#qrCamFile').value = ''; } catch {}
+  const img = $('#qrImg'); if (img) { img.removeAttribute('src'); img.classList.add('hidden'); }
+  hide('#qrPrevBtns'); hide('#qrDecoded');
+  const dec = $('#qrDecoded'); if (dec) dec.innerHTML = '';
+}
+function qrTake(f) {
+  if (!f) return;
+  if (!/^image\/(png|jpe?g|webp)$/i.test(f.type || '')) { toast(T('qrBadFile', 'That file could not be read as an image. Please choose a PNG, JPG or WebP screenshot.')); return; }
+  if (f.size > QR_MAX) { toast(T('qrTooBig', 'That image is too large. Please choose an image under 8 MB.')); return; }
+  qrReset();
+  _qrFile = f; _qrUrl = URL.createObjectURL(f);
+  const img = $('#qrImg'); img.src = _qrUrl; img.classList.remove('hidden');
+  show('#qrPrevBtns'); hide('#qrDecoded');
+}
+function parseQrContent(raw) {
+  const s = String(raw || '').trim();
+  if (/^upi:\/\//i.test(s)) {
+    let p = {};
+    try { p = Object.fromEntries(new URLSearchParams(s.split('?')[1] || '')); } catch {}
+    return { type: 'upi', pa: p.pa || '', pn: p.pn || '', am: p.am || '', note: p.tn || p.tr || '' };
+  }
+  if (/^(https?:\/\/|www\.)/i.test(s)) return { type: 'url', url: s };
+  return { type: 'text', text: s };
+}
+function qrRead(file) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        if (typeof jsQR === 'undefined') return rej(new Error('decoder'));
+        for (const max of [1600, 800]) {
+          const scale = Math.min(1, max / Math.max(img.width, img.height));
+          const cv = document.createElement('canvas');
+          cv.width = Math.max(1, Math.round(img.width * scale));
+          cv.height = Math.max(1, Math.round(img.height * scale));
+          const cx = cv.getContext('2d', { willReadFrequently: true });
+          cx.drawImage(img, 0, 0, cv.width, cv.height);
+          const out = jsQR(cx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height);
+          if (out && out.data) return res(out.data);
+        }
+        res(null);
+      } catch (e) { rej(e); }
+    };
+    img.onerror = () => rej(new Error('decode'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+function qrTeach(summary) {
+  try {
+    const elx = document.querySelector('#qrDecoded');
+    if (elx) window.dispatchEvent(new CustomEvent('gw-teach', { detail: { el: '#qrDecoded', text: summary } }));
+  } catch {}
+}
+function qrShow(data) {
+  const c = parseQrContent(data);
+  const box = $('#qrDecoded');
+  const kv = (label, val, keep) => `<div>${esc(label)}: ${keep ? `<b data-keep="1">${esc(val)}</b>` : esc(val)}</div>`;
+  let inner = `<b>${esc(T('qrFoundTitle', 'QR detected'))}</b>`;
+  let detail = '';
+  if (c.type === 'upi') {
+    inner += kv(T('qrType', 'Type'), T('qrUpi', 'UPI payment request'));
+    detail += `${T('qrType', 'Type')}: ${T('qrUpi', 'UPI payment request')}. `;
+    if (c.pa) { inner += kv(T('qrPayee', 'Payee / UPI ID'), c.pa, true); detail += `${T('qrPayee', 'Payee / UPI ID')}: ${c.pa}. `; }
+    if (c.pn) { inner += kv(T('qrName', 'Name'), c.pn); detail += `${c.pn}. `; }
+    if (c.am) { inner += kv(T('qrAmount', 'Amount'), c.am, true); detail += `${T('qrAmount', 'Amount')}: ${c.am}. `; }
+    if (c.note) { inner += kv(T('qrNote', 'Note / reference'), c.note, true); }
+    inner += `<div class="ga-btns" style="justify-content:flex-start;margin-top:8px"><button class="btn btn-red btn-sm" id="qrGoUpi">${esc(T('qrDecodeUpi', 'Decode payment intent'))}</button></div>`;
+  } else if (c.type === 'url') {
+    inner += kv(T('qrType', 'Type'), T('qrUrl', 'Web link'));
+    inner += kv('URL', c.url, true);
+    detail += `${T('qrType', 'Type')}: ${T('qrUrl', 'Web link')}. `;
+    inner += `<div class="ga-btns" style="justify-content:flex-start;margin-top:8px"><button class="btn btn-red btn-sm" id="qrWalk">${esc(T('qrInvestigate', 'Investigate this link safely'))}</button></div>`;
+  } else {
+    inner += kv(T('qrType', 'Type'), T('qrText', 'Text'));
+    inner += kv('—', c.text, true);
+    detail += `${T('qrType', 'Type')}: ${T('qrText', 'Text')}. `;
+  }
+  box.innerHTML = inner; show('#qrDecoded');
+  const upiBtn = $('#qrGoUpi');
+  if (upiBtn) upiBtn.addEventListener('click', () => { $('#inUpi').value = data; $('#btnUpi').click(); });
+  const walkBtn = $('#qrWalk');
+  if (walkBtn) walkBtn.addEventListener('click', () => {
+    try { sessionStorage.setItem('gw_walkurl', c.url); } catch {}
+    location.href = 'ghost.html';
+  });
+  try { box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch {}
+  const msg = T('qrFoundSay', 'QR detected. {detail}').replace('{detail}', detail.trim());
+  qrTeach(msg);
+}
+$('#qrFile').addEventListener('change', (e) => { hideQrSample(); qrTake(e.target.files[0]); });
+$('#qrCamFile').addEventListener('change', (e) => { hideQrSample(); qrTake(e.target.files[0]); });
+function hideQrSample() { const n = $('#qrSampleNote'); if (n) n.classList.add('hidden'); }
+$('#btnSampleQr').addEventListener('click', async () => {
+  setBusy('#btnSampleQr', true);
+  try {
+    const r = await fetch('assets/sample-qr.png');
+    if (!r.ok) throw new Error('sample');
+    const blob = await r.blob();
+    const f = new File([blob], 'sample-qr.png', { type: 'image/png' });
+    qrTake(f);
+    const n = $('#qrSampleNote');
+    if (n) { n.textContent = T('sampleQrNote', 'Sample QR — demonstration only. No payment was initiated.'); n.classList.remove('hidden'); }
+    // guided demo: ghost walks the judge through preview -> Use This Image -> decode
+    try { window.dispatchEvent(new CustomEvent('gw-teach', { detail: { el: '#qrUse', key: 'qrGuideSteps' } })); } catch {}
+  } catch (e) { toast(T('qrBadFile', 'That file could not be read as an image. Please choose a PNG, JPG or WebP screenshot.')); }
+  finally { setBusy('#btnSampleQr', false); }
+});
+$('#qrChange').addEventListener('click', () => $('#qrFile').click());
+$('#qrRemove').addEventListener('click', () => qrReset());
+$('#qrUse').addEventListener('click', async () => {
+  if (!_qrFile) return;
+  setBusy('#qrUse', true);
+  try {
+    const data = await qrRead(_qrFile);
+    if (!data) { toast(T('qrNoCode', 'We could not read a QR code from this image. Try a clearer image where the entire QR code is visible.')); return; }
+    qrShow(data);
+  } catch (e) { toast(T('qrBadFile', 'That file could not be read as an image. Please choose a PNG, JPG or WebP screenshot.')); }
+  finally { setBusy('#qrUse', false); }
+});
+['dragover', 'dragenter'].forEach(ev => $('#qrUp').addEventListener(ev, (e) => { e.preventDefault(); }));
+$('#qrUp').addEventListener('drop', (e) => {
+  e.preventDefault();
+  const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) { hideQrSample(); qrTake(f); }
+});
+$('#btnUpi').addEventListener('click', async () => {
+  const upi = $('#inUpi').value.trim();
+  if (!upi) return shake($('#inUpi'));
+  stopSpeak();
+  setBusy('#btnUpi', true);
+  hide('#emptyState'); show('#resultBox');
+  try {
+    const g = await callGhost('', upi);
+    paintVerdict($('#resultBox'), {
+      verdict: g.verdict,
+      ...ghostVerdictText(g),
+      ask_trusted: 'Would you like someone you trust to check this with you?',
+      patterns: (g.flags || []).map(f => ({ id: f.id, label: f.label, explain: f.explain + (f.evidence ? ' [' + f.evidence + ']' : ''), severity: 'high' })),
+      urls: []
+    });
+    await runReplay($('#replayBox'), g);
+    if (window.translateNode) { translateNode($('#resultBox')); translateNode($('#replayBox')); }
+  } catch (e) { toast(e.message || 'Decode failed'); }
+  setBusy('#btnUpi', false);
+});
+$('#btnVoice').addEventListener('click', () => {
+  speakVerdict($('#resultBox'), siteLang(), $('#btnVoice'));
+});
+</script>
+</body>
+</html>

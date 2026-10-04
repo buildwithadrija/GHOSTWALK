@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Walk a link — GHOSTWALK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,600;9..144,0,700;9..144,1,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html">
+      <span class="brand-ghost" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 3C9.9 3 5 7.9 5 14v11.2c0 .9 1.1 1.4 1.8.8l2.6-2.3 2.7 2.3c.5.4 1.2.4 1.7 0l2.6-2.3 2.7 2.3c.5.4 1.2.4 1.7 0l2.6-2.3 2.7 2.3c.7.6 1.8.1 1.8-.8V14C27 7.9 22.1 3 16 3Z" fill="#fff" stroke="#1A1E2C" stroke-width="1.8"/><circle cx="12.3" cy="14" r="1.7" fill="#1A1E2C"/><circle cx="19.7" cy="14" r="1.7" fill="#1A1E2C"/></svg></span>
+      <span class="brand-t"><strong data-keep="1">GHOSTWALK</strong><em>let the ghost walk it first</em></span>
+    </a>
+    <nav class="topnav">
+      <a href="message.html">Message</a>
+      <a href="ghost.html" class="active">Ghost walk</a>
+      <a href="qr.html">QR / UPI</a>
+      <a href="trusted.html">Trust</a>
+      <a href="recovery.html">I already paid</a>
+    </nav>
+    <a href="index.html" class="btn btn-paper btn-sm">← All options</a>
+  </div>
+</header>
+
+<section class="page-hero page-hero-dark">
+  <div class="wrap">
+    <p class="kicker">👻 The Ghost · server-side sandbox · synthetic data only</p>
+    <h1>Don’t open it. <em>Send the ghost.</em></h1>
+    <p class="lede">Paste the suspicious link. The disposable ghost follows redirects, reads page structure and flags forms, APK pushes, UPI steps and chat traps — then stops safely. Calls <code>POST /api/ghost</code> live.</p>
+  </div>
+</section>
+
+<section class="section page-body">
+  <div class="wrap page-grid">
+    <div class="panel reveal in">
+      <label class="lbl">Suspicious link <span>(the ghost opens it — you don’t)</span></label> <button class="why" data-explain="walk-link">?</button>
+      <input id="inUrl" data-keep="1" data-ghost-guide="walk-link" data-ghost-say="g_walk_go" placeholder="https:// … or bit.ly/…" />
+      <p class="hint">Try the redirect test: <button class="linklike" id="tryRedirect" data-keep="1">http://httpbin.org/redirect/2</button></p>
+      <button class="btn btn-paper btn-sm" id="btnSampleJourney" style="margin-top:8px">Try sample journey</button>
+      <p class="sample-note hidden" id="sampleNote"></p>
+      <button class="btn btn-red btn-block" id="btnGhost" data-ghost-guide="walk-go" data-ghost-start="walk"><span class="btn-ghost">👻</span> Send the ghost down this link</button>
+      <div class="contract" style="margin-top:14px">🛡 The ghost never types your PAN, OTP, password or bank details. It only <b>observes</b> the same screens a visitor would see.</div>
+      <div class="api-line" id="apiStatus"><span class="api-dot"></span><span>Connecting…</span></div>
+    </div>
+
+    <div>
+      <div class="empty panel reveal in" id="emptyState">
+        <div class="empty-ghost">👻</div>
+        <h3>The ghost is waiting…</h3>
+        <p>Paste a link and send the ghost. Watch the replay below — <b>it stops where you never had to go.</b></p>
+      </div>
+      <div class="panel hidden" id="resultBox">
+        <div class="verdict amber"><div class="verdict-stamp">—</div><h3 class="verdict-title">—</h3><p class="verdict-sub">—</p></div>
+        <div class="ev-list"></div>
+        <div class="res-actions">
+          <button class="btn btn-paper btn-sm" id="btnVoice">🔊 Hear it</button>
+          <a class="btn btn-paper btn-sm" href="trusted.html">👪 Loop in someone I trust →</a>
+        </div>
+      </div>
+      <div class="replay hidden" id="replayBox" style="margin-top:16px">
+        <div class="replay-head"><b>👻 Ghost walk replay</b><span class="replay-meta">server-side · synthetic data only</span></div>
+        <div class="journey"><div class="journey-ghost">👻</div><div class="journey-line"></div></div>
+        <ol class="glog"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><p class="foot-base">“Send a dummy. Not yourself.” 👻 · Helpline <b>1930</b> · cybercrime.gov.in · <a href="index.html" style="color:#FFE9B8">Home</a></p></div></footer>
+
+<script src="common.js"></script>
+<script src="dict-hi.js"></script>
+<script src="dict-bn.js"></script>
+<script src="dict-mr.js"></script>
+<script src="dict-ta.js"></script>
+<script src="dict-te.js"></script>
+<script src="marquee-pre.js"></script>
+<script src="i18n.js"></script>
+<script src="assistant.js"></script>
+<script src="ghost-ai.js"></script>
+<script>
+initChrome(); initApi($('#apiStatus'));
+try { const w = sessionStorage.getItem('gw_walkurl'); if (w) { $('#inUrl').value = w; sessionStorage.removeItem('gw_walkurl'); } } catch {}
+const T = (k, fb) => { try { if (window.__tr) { const v = window.__tr(k); if (typeof v === 'string' && v.trim()) return v; } } catch {} return fb; };
+$('#btnSampleJourney').addEventListener('click', () => {
+  $('#inUrl').value = 'http://httpbin.org/redirect/2';
+  const sn = $('#sampleNote');
+  if (sn) { sn.textContent = T('sampleJourneyNote', 'Controlled demonstration journey — safe test destination, not a live threat.'); sn.classList.remove('hidden'); }
+  $('#btnGhost').click();
+});
+$('#inUrl').addEventListener('input', () => { const sn = $('#sampleNote'); if (sn) sn.classList.add('hidden'); });
+$('#tryRedirect').addEventListener('click', () => { $('#inUrl').value = 'http://httpbin.org/redirect/2'; });
+$('#btnGhost').addEventListener('click', async () => {
+  const url = $('#inUrl').value.trim();
+  if (!url) return shake($('#inUrl'));
+  stopSpeak();
+  setBusy('#btnGhost', true);
+  hide('#emptyState'); show('#resultBox');
+  try {
+    const g = await callGhost(url, '');
+    paintVerdict($('#resultBox'), {
+      verdict: g.verdict,
+      ...ghostVerdictText(g),
+      ask_trusted: 'Would you like someone you trust to check this with you?',
+      patterns: (g.flags || []).map(f => ({ id: f.id, label: f.label, explain: f.explain + (f.evidence ? ' [' + f.evidence + ']' : ''), severity: 'high' })),
+      urls: []
+    });
+    await runReplay($('#replayBox'), g);
+    if (window.translateNode) { translateNode($('#resultBox')); translateNode($('#replayBox')); }
+  } catch (e) { toast(e.message || 'Ghost walk failed'); }
+  setBusy('#btnGhost', false);
+});
+$('#btnVoice').addEventListener('click', () => {
+  speakVerdict($('#resultBox'), siteLang(), $('#btnVoice'));
+});
+</script>
+</body>
+</html>

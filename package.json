@@ -1,0 +1,22 @@
+{
+  "name": "ghostwalk",
+  "version": "1.0.0",
+  "description": "GHOSTWALK — Let the fake investor take the risk. Track A: Digital Fraud & Scam Resilience",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node scripts/ghost-ai-test.js",
+    "i18n:check": "node scripts/i18n-check.js",
+    "i18n:build": "node scripts/i18n-build.js",
+    "i18n:ghost": "node scripts/i18n-build.js --ghost-only",
+    "i18n:pages": "node scripts/i18n-pages.js",
+    "i18n:repair": "node scripts/i18n-repair.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "jsdom": "^30.1.1"
+  }
+}

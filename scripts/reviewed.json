@@ -1,0 +1,17 @@
+{
+  "_comment": "Human-reviewed translations for fragments the machine translator leaves in English (product kickers with status words like 'The Ghost', 'Payment-intent'). Consulted by scripts/i18n-repair.js BEFORE calling any provider, so a reviewed translation is never overwritten by machine output. Key format: <mtl-code>|<english source>",
+
+  "ta|👻 The Ghost · server-side sandbox · synthetic data only": "👻 கோஸ்ட் · சர்வர் பக்க சாண்ட்பாக்ஸ் · செயற்கை தரவு மட்டும்",
+  "ta|📷 Payment-intent decoder · never scan it yourself": "📷 பேமெண்ட்-இன்டென்ட் டிகோடர் · அதை நீங்களே ஸ்கேன் செய்ய வேண்டாம்",
+  "ta|This says NOT VERIFIED. Do not pay yet.": "இது NOT VERIFIED என்று கூறுகிறது. இன்னும் பணம் செலுத்தாதீர்கள்.",
+  "gu|This says NOT VERIFIED. Do not pay yet.": "આ NOT VERIFIED કહે છે. હજુ ચુકવણી કરશો નહીં.",
+
+  "te|👻 The Ghost · server-side sandbox · synthetic data only": "👻 ఘోస్ట్ · సర్వర్ వైపు శాండ్‌బాక్స్ · సింథటిక్ డేటా మాత్రమే",
+  "te|📷 Payment-intent decoder · never scan it yourself": "📷 చెల్లింపు-ఉద్దేశం డీకోడర్ · దీన్ని మీరే స్కాన్ చేయవద్దు",
+
+  "hi|👻 TELEGRAM VIP GROUP · ": "👻 टेलीग्राम VIP ग्रुप · ",
+  "bn|👻 TELEGRAM VIP GROUP · ": "👻 টেলিগ্রাম VIP গ্রুপ · ",
+  "mr|👻 TELEGRAM VIP GROUP · ": "👻 टेलिग्राम VIP गट · ",
+  "ta|👻 TELEGRAM VIP GROUP · ": "👻 டெலிகிராம் VIP குழு · ",
+  "te|👻 TELEGRAM VIP GROUP · ": "👻 టెలిగ్రామ్ విఐపి గ్రూప్ · "
+}

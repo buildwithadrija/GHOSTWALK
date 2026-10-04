@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Check a message — GHOSTWALK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,600;9..144,0,700;9..144,1,400&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="jsqr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html">
+      <span class="brand-ghost" aria-hidden="true"><svg viewBox="0 0 32 32" width="30" height="30"><path d="M16 3C9.9 3 5 7.9 5 14v11.2c0 .9 1.1 1.4 1.8.8l2.6-2.3 2.7 2.3c.5.4 1.2.4 1.7 0l2.6-2.3 2.7 2.3c.5.4 1.2.4 1.7 0l2.6-2.3 2.7 2.3c.7.6 1.8.1 1.8-.8V14C27 7.9 22.1 3 16 3Z" fill="#fff" stroke="#1A1E2C" stroke-width="1.8"/><circle cx="12.3" cy="14" r="1.7" fill="#1A1E2C"/><circle cx="19.7" cy="14" r="1.7" fill="#1A1E2C"/></svg></span>
+      <span class="brand-t"><strong data-keep="1">GHOSTWALK</strong><em>let the ghost walk it first</em></span>
+    </a>
+    <nav class="topnav">
+      <a href="message.html" class="active">Message</a>
+      <a href="ghost.html">Ghost walk</a>
+      <a href="qr.html">QR / UPI</a>
+      <a href="trusted.html">Trust</a>
+      <a href="recovery.html">I already paid</a>
+    </nav>
+    <a href="index.html" class="btn btn-paper btn-sm">← All options</a>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="kicker">💬 Conversation intelligence · works before any link appears</p>
+    <h1>Forward it <em>however it came.</em></h1>
+    <p class="lede">Forward what the “advisor” sent — WhatsApp, Telegram, profit screenshots, voice-note transcripts. Ghostwalk finds manipulation patterns, not just bad words. Everything is read <b>on your device or this server</b>; only what you submit is ever analysed.</p>
+  </div>
+</section>
+
+<section class="section page-body">
+  <div class="wrap page-grid">
+    <div class="panel reveal in">
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="text">✍️ Text</button>
+        <button class="tab" data-tab="photo">🖼️ Photo</button>
+        <button class="tab" data-tab="pdf">📄 PDF</button>
+        <button class="tab" data-tab="link">🔗 Link</button>
+        <button class="tab" data-tab="voice">🎤 Voice</button>
+      </div>
+
+      <!-- TEXT -->
+      <div class="tabpane active" id="pane-text">
+        <label class="lbl">Forwarded message <span>(English / Hinglish / Hindi — paste everything they sent)</span></label> <button class="why" data-explain="check-message">?</button>
+        <textarea id="inText" rows="7" data-ghost-guide="check-message" data-ghost-say="g_check_go" placeholder="Paste the WhatsApp / Telegram message here…"></textarea>
+        <div class="row2">
+          <div><label class="lbl">Amount mentioned (optional)</label><input id="inAmount" placeholder="e.g. ₹25,000" /></div>
+          <div><label class="lbl">Reply language</label>
+            <select id="inLang"><option value="en">English</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="mr">मराठी</option></select>
+          </div>
+        </div>
+        <div class="samples"><span>Try sample:</span>
+          <button class="chip" data-sample="trap">Sample trap</button>
+          <button class="chip" data-sample="ipo">Fake IPO lure</button>
+          <button class="chip" data-sample="plain">Polite stranger</button>
+        </div>
+        <p class="sample-note hidden" id="sampleNote"></p>
+        <button class="btn btn-red btn-block" id="btnAnalyze" data-ghost-guide="check-go" data-ghost-start="check"><span class="btn-ghost">👻</span> Analyse this message</button>
+      </div>
+
+      <!-- PHOTO -->
+      <div class="tabpane" id="pane-photo">
+        <label class="lbl">Chat / profit screenshot <span>(JPG, PNG — read on your device, never auto-uploaded)</span></label>
+        <label class="drop">📤 Tap to choose a photo<input type="file" id="photoFile" accept="image/*" hidden /></label>
+        <img id="photoPrev" class="preview hidden" alt="Uploaded screenshot preview" />
+        <div class="progress hidden" id="ocrProg"><div class="progress-bar" id="ocrBar"></div></div>
+        <p class="hint" id="photoHint">The ghost will read the text in the photo (OCR) and check it for a hidden QR code — both happen in your browser.</p>
+        <label class="lbl">Text read from photo <span>(editable — fix anything misread)</span></label>
+        <textarea id="ocrText" rows="5" placeholder="Extracted text will appear here…"></textarea>
+        <div class="qr-found hidden" id="qrFound">📷 QR code found in photo: <b id="qrContent" data-keep="1"></b><br /><button class="btn btn-ink btn-sm" id="btnWalkQr" style="margin-top:8px">👻 Walk this with the ghost →</button></div>
+        <button class="btn btn-red btn-block" id="btnAnalyzeOcr">Analyse photo text →</button>
+      </div>
+
+      <!-- PDF -->
+      <div class="tabpane" id="pane-pdf">
+        <label class="lbl">Investment PDF <span>(“brochure”, “certificate”, “agreement” — text extracted in browser)</span></label>
+        <label class="drop">📄 Tap to choose a PDF<input type="file" id="pdfFile" accept="application/pdf,.pdf" hidden /></label>
+        <p class="hint" id="pdfHint">Only the words are extracted — nothing leaves your device except text you choose to analyse.</p>
+        <label class="lbl">Text read from PDF <span>(editable)</span></label>
+        <textarea id="pdfText" rows="6" placeholder="Extracted PDF text will appear here…"></textarea>
+        <button class="btn btn-red btn-block" id="btnAnalyzePdf">Analyse PDF text →</button>
+      </div>
+
+      <!-- LINK -->
+      <div class="tabpane" id="pane-link">
+        <label class="lbl">Telegram / WhatsApp / website invite <span>(the ghost opens it — you don’t)</span></label>
+        <input id="linkUrl" data-keep="1" placeholder="e.g. https://t.me/+xxxxx  or  bit.ly/…  or wa.me/…" />
+        <label class="lbl">What did they say with it? <span>(optional — analysed for pressure tactics too)</span></label>
+        <textarea id="linkNote" rows="3" placeholder="e.g. Join my VIP group, only 5 slots left, deposit today…"></textarea>
+        <button class="btn btn-red btn-block" id="btnWalkLink"><span class="btn-ghost">👻</span> Walk link + read message</button>
+      </div>
+
+      <!-- VOICE -->
+      <div class="tabpane" id="pane-voice">
+        <label class="lbl">Voice note / call summary <span>(dictate it — speech stays in your browser)</span></label>
+        <div class="voice-row">
+          <button class="btn btn-ink" id="btnMic">🎤 Start speaking</button>
+          <span class="hint" id="micHint">Press, speak the message you heard, press again to stop. Chrome / Edge supported.</span>
+        </div>
+        <textarea id="voiceText" rows="5" placeholder="Your words will appear here — or type what the voice note said…"></textarea>
+        <button class="btn btn-red btn-block" id="btnAnalyzeVoice">Analyse spoken message →</button>
+      </div>
+
+      <div class="api-line" id="apiStatus"><span class="api-dot"></span><span>Connecting…</span></div>
+    </div>
+
+    <div>
+      <div class="empty panel reveal in" id="emptyState">
+        <div class="empty-ghost">👻</div>
+        <h3>The ghost is waiting…</h3>
+        <p>Use any tab on the left. You’ll get <b>STOP</b> or <b>NOT VERIFIED</b> — never a false “Safe ✓”.</p>
+      </div>
+
+      <div class="panel hidden" id="resultBox">
+        <div class="verdict amber"><div class="verdict-stamp">—</div><h3 class="verdict-title">—</h3><p class="verdict-sub">—</p></div>
+        <div class="ev-list"></div>
+        <div class="found-urls hidden"></div>
+        <div class="res-actions">
+          <button class="btn btn-paper btn-sm" id="btnVoice">🔊 Hear it</button>
+          <button class="btn btn-paper btn-sm" id="btnToTrusted">👪 Loop in someone I trust →</button>
+          <a class="btn btn-ghostline btn-sm" href="recovery.html">I already paid →</a>
+        </div>
+      </div>
+
+      <div class="replay hidden" id="replayBox" style="margin-top:16px">
+        <div class="replay-head"><b>👻 Ghost walk replay</b><span class="replay-meta">server-side · synthetic data only</span></div>
+        <div class="journey"><div class="journey-ghost">👻</div><div class="journey-line"></div></div>
+        <ol class="glog"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap"><p class="foot-base">“Send a dummy. Not yourself.” 👻 · Helpline <b>1930</b> · cybercrime.gov.in · <a href="index.html" style="color:#FFE9B8">Home</a></p></div></footer>
+
+<script src="common.js"></script>
+<script src="dict-hi.js"></script>
+<script src="dict-bn.js"></script>
+<script src="dict-mr.js"></script>
+<script src="dict-ta.js"></script>
+<script src="dict-te.js"></script>
+<script src="marquee-pre.js"></script>
+<script src="i18n.js"></script>
+<script src="assistant.js"></script>
+<script src="ghost-ai.js"></script>
+<script>
+initChrome(); initApi($('#apiStatus'));
+
+/* tabs */
+$$('.tab').forEach(b => b.addEventListener('click', () => {
+  $$('.tab').forEach(x => x.classList.remove('active'));
+  $$('.tabpane').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  $('#pane-' + b.dataset.tab).classList.add('active');
+  stopSpeak();
+}));
+function lang() { return $('#inLang').value; }
+function useText(text) {
+  $('#inText').value = text;
+  $('.tab[data-tab="text"]').click();
+  $('#btnAnalyze').click();
+}
+
+/* ── shared: analyse text, auto-walk first URL ── */
+let lastData = null;
+async function analyseText(text, amount, btnSel) {
+  if (!text) { toast('Nothing to analyse yet.'); return; }
+  stopSpeak();
+  setBusy(btnSel, true);
+  hide('#emptyState'); show('#resultBox');
+  /* the Ghost may use the wording for context. It is never sent to a provider
+     as-is: the server runs the privacy layer, and the default mode forwards
+     entity flags only, with consent required for redacted prose. */
+  try { window.GW_EVIDENCE_TEXT = text; } catch {}
+  try {
+    lastData = await callAnalyze(text, srvLang(), amount || '');
+    paintVerdict($('#resultBox'), lastData);
+    if (lastData.urls && lastData.urls.length) {
+      const g = await callGhost(lastData.urls[0], '');
+      await runReplay($('#replayBox'), g);
+      appendGhostFlags($('#resultBox'), g.flags || []);
+    } else hide('#replayBox');
+    if (window.translateNode) { translateNode($('#resultBox')); translateNode($('#replayBox')); }
+  } catch (e) { toast(e.message || 'Analysis failed'); }
+  setBusy(btnSel, false);
+}
+
+/* ── TEXT pane ── */
+const T = (k, fb) => { try { if (window.__tr) { const v = window.__tr(k); if (typeof v === 'string' && v.trim()) return v; } } catch {} return fb; };
+const SAMPLES = {
+  trap: 'Namaste, I manage a SEBI-registered VIP group. Members doubled money in 40 days. Your Rs 5000 grew to Rs 8200 already, see profit screenshot. To unlock your withdrawal, deposit Rs 25000 security fee today only. Slots closing! Dont tell anyone, only for you. Join fast https://bit.ly/vip-profit9 and install the trading app, then share screen for verification.',
+  ipo: 'CONFIDENTIAL IPO opportunity! Assured 90% returns in 3 weeks, only 7 slots left for selected investors. Start with Rs 10000 then upgrade to the Rs 50000 VIP plan for bigger profit. Pay via UPI fastprofit@okhdfc and send screenshot. Do not share with anyone. https://quick-ipo-gains.example/promo',
+  plain: 'Hello, I am calling from a new investment course company. We offer paid classes on how markets work, with no promise of returns. Would you like a brochure? You can reach us on our official website or visit our office.'
+};
+$$('.chip').forEach(c => c.addEventListener('click', () => {
+  $('#inText').value = SAMPLES[c.dataset.sample] || '';
+  const sn = $('#sampleNote');
+  if (sn) { sn.textContent = T('sampleNote', 'Sample — for demonstration only.'); sn.classList.remove('hidden'); }
+  // guided demo: ghost points at the real analysis button, the judge presses it
+  try { window.dispatchEvent(new CustomEvent('gw-teach', { detail: { el: '#btnAnalyze', key: 'g_check_go' } })); } catch {}
+}));
+$('#inText').addEventListener('input', () => { const sn = $('#sampleNote'); if (sn) sn.classList.add('hidden'); });
+$('#btnAnalyze').addEventListener('click', () => analyseText($('#inText').value.trim(), $('#inAmount').value, '#btnAnalyze'));
+$('#btnAnalyzeOcr').addEventListener('click', () => useText($('#ocrText').value.trim()));
+$('#btnAnalyzePdf').addEventListener('click', () => useText($('#pdfText').value.trim()));
+$('#btnAnalyzeVoice').addEventListener('click', () => useText($('#voiceText').value.trim()));
+
+/* ── PHOTO pane: OCR (Tesseract) + QR (jsQR), all on-device ── */
+$('#photoFile').addEventListener('change', async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  const url = URL.createObjectURL(f);
+  const prev = $('#photoPrev'); prev.src = url; prev.classList.remove('hidden');
+  $('#qrFound').classList.add('hidden'); $('#ocrText').value = '';
+  const img = new Image();
+  img.onload = async () => {
+    try {
+      if (typeof jsQR !== 'undefined') {
+        const scale = Math.min(1, 900 / Math.max(img.width, img.height));
+        const cv = document.createElement('canvas');
+        cv.width = img.width * scale; cv.height = img.height * scale;
+        const cx = cv.getContext('2d', { willReadFrequently: true });
+        cx.drawImage(img, 0, 0, cv.width, cv.height);
+        const qr = jsQR(cx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height);
+        if (qr && qr.data) {
+          $('#qrContent').textContent = qr.data.length > 90 ? qr.data.slice(0, 90) + '…' : qr.data;
+          $('#qrFound').classList.remove('hidden');
+          window._qrData = qr.data;
+        }
+      }
+    } catch (err) { /* QR optional — OCR continues */ }
+    if (typeof Tesseract === 'undefined') {
+      $('#photoHint').textContent = '⚠️ Reading library could not load (needs internet once). Please type what the photo says into the Text tab.';
+      return;
+    }
+    show('#ocrProg');
+    try {
+      const worker = await Tesseract.createWorker('eng', Tesseract.OEM.LSTM, {
+        logger: (m) => { if (m.status === 'recognizing text' && m.progress) $('#ocrBar').style.width = Math.round(m.progress * 100) + '%'; }
+      });
+      const { data } = await worker.recognize(url);
+      await worker.terminate();
+      $('#ocrText').value = (data.text || '').trim() || '(No readable text found — try a clearer photo, or type it into the Text tab.)';
+      $('#photoHint').textContent = '✓ Photo read on your device. Fix any misread words above, then press Analyse.';
+    } catch (err) {
+      $('#photoHint').textContent = '⚠️ Could not read this photo. Please type what it says into the Text tab.';
+    }
+    hide('#ocrProg'); $('#ocrBar').style.width = '0%';
+  };
+  img.src = url;
+});
+$('#btnWalkQr').addEventListener('click', async () => {
+  const data = (window._qrData || '').trim(); if (!data) return;
+  stopSpeak();
+  setBusy('#btnWalkQr', true);
+  hide('#emptyState'); show('#resultBox');
+  try {
+    const isUpi = /^upi:\/\//i.test(data);
+    const g = isUpi ? await callGhost('', data) : await callGhost(data, '');
+    const qrText = ghostVerdictText(g);
+    paintVerdict($('#resultBox'), {
+      verdict: g.verdict,
+      title: qrText.title,
+      subtitle: (isUpi ? 'QR hides a payment address — decoded without you scanning anything. ' : 'QR hides a link — opened server-side, you touched nothing. ') + qrText.subtitle,
+      ask_trusted: 'Would you like someone you trust to check this with you?',
+      patterns: (g.flags || []).map(f => ({ id: f.id, label: f.label, explain: f.explain + (f.evidence ? ' [' + f.evidence + ']' : ''), severity: 'high' })),
+      urls: []
+    });
+    await runReplay($('#replayBox'), g);
+    if (window.translateNode) { translateNode($('#resultBox')); translateNode($('#replayBox')); }
+  } catch (e) { toast(e.message || 'QR walk failed'); }
+  setBusy('#btnWalkQr', false);
+});
+
+/* ── PDF pane: text extraction (pdf.js), on-device ── */
+$('#pdfFile').addEventListener('change', async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  if (typeof pdfjsLib === 'undefined') { $('#pdfHint').textContent = '⚠️ PDF reader could not load (needs internet once). Please paste the text into the Text tab.'; return; }
+  try { pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; } catch {}
+  $('#pdfHint').textContent = 'Reading PDF…';
+  try {
+    const buf = await f.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    const pages = Math.min(pdf.numPages, 20);
+    let out = [];
+    for (let i = 1; i <= pages; i++) {
+      const pg = await pdf.getPage(i);
+      const tc = await pg.getTextContent();
+      out.push(tc.items.map(it => it.str).join(' '));
+    }
+    const text = out.join('\n\n').replace(/[ \t]+/g, ' ').trim();
+    $('#pdfText').value = text || '(No selectable text — this PDF may be scanned images. Screenshot its pages and use the Photo tab.)';
+    $('#pdfHint').textContent = `✓ Read ${pages} page${pages > 1 ? 's' : ''} on your device (${text.length.toLocaleString('en-IN')} characters). Press Analyse below.`;
+  } catch (err) {
+    $('#pdfHint').textContent = '⚠️ This PDF could not be read. Screenshot its pages and use the Photo tab instead.';
+  }
+});
+
+/* ── LINK pane: Telegram / WhatsApp / short links → ghost + note analysis ── */
+$('#btnWalkLink').addEventListener('click', async () => {
+  let url = $('#linkUrl').value.trim();
+  const note = $('#linkNote').value.trim();
+  if (!url && !note) return shake($('#linkUrl'));
+  if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+  stopSpeak();
+  setBusy('#btnWalkLink', true);
+  hide('#emptyState'); show('#resultBox');
+  try {
+    const g = url ? await callGhost(url, '') : { steps: [], flags: [], domains: [], verdict: 'YELLOW' };
+    let msgHits = [];
+    if (note) {
+      const a = await callAnalyze(note, srvLang(), '');
+      msgHits = (a.patterns || []).map(p => ({ id: p.id, label: 'Message: ' + p.label, explain: p.explain, severity: p.severity }));
+    }
+    const walkRed = (g.flags && g.flags.length) || msgHits.length ? 'RED' : g.verdict;
+    const walkText = ghostVerdictText({ ...g, verdict: walkRed });
+    paintVerdict($('#resultBox'), {
+      verdict: walkRed,
+      title: walkText.title,
+      subtitle: (url ? 'The invite was opened server-side with fake data. You never joined, tapped, or installed anything. ' : '') + walkText.subtitle,
+      ask_trusted: 'Would you like someone you trust to check this with you?',
+      patterns: [...msgHits, ...((g.flags || []).map(f => ({ id: f.id, label: 'Ghost: ' + f.label, explain: f.explain + (f.evidence ? ' [' + f.evidence + ']' : ''), severity: 'high' })))],
+      urls: []
+    });
+    if (g.steps && g.steps.length) await runReplay($('#replayBox'), g); else hide('#replayBox');
+    if (window.translateNode) { translateNode($('#resultBox')); translateNode($('#replayBox')); }
+  } catch (e) { toast(e.message || 'Walk failed'); }
+  setBusy('#btnWalkLink', false);
+});
+
+/* ── VOICE pane: mic dictation (Web Speech), stays in browser ── */
+let rec = null, listening = false;
+$('#btnMic').addEventListener('click', () => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { $('#micHint').textContent = '⚠️ Voice typing needs Chrome or Edge. Please type into the box instead.'; return; }
+  if (listening) { rec.stop(); return; }
+  rec = new SR();
+  rec.lang = (window.speechCode ? speechCode() : 'en-IN');
+  rec.interimResults = true;
+  const box = $('#voiceText'); const base = box.value ? box.value + ' ' : '';
+  rec.onresult = (ev) => {
+    let txt = '';
+    for (const r of ev.results) txt += r[0].transcript;
+    box.value = base + txt;
+  };
+  rec.onend = () => { listening = false; $('#btnMic').textContent = '🎤 Start speaking'; $('#micHint').textContent = 'Press, speak, press again to stop. Check the words, then Analyse.'; };
+  rec.onerror = (ev) => { listening = false; $('#btnMic').textContent = '🎤 Start speaking'; $('#micHint').textContent = 'Mic blocked or unheard (' + ev.error + '). Check permission and retry, or type instead.'; };
+  try { rec.start(); listening = true; $('#btnMic').textContent = '⏹ Stop'; $('#micHint').textContent = 'Listening… speak now.'; }
+  catch { $('#micHint').textContent = 'Could not start the mic. Please type instead.'; }
+});
+
+/* ── shared result actions ── */
+$('#btnVoice').addEventListener('click', () => {
+  speakVerdict($('#resultBox'), siteLang(), $('#btnVoice'));
+});
+$('#btnToTrusted').addEventListener('click', () => {
+  const cues = lastData && lastData.patterns ? lastData.patterns.slice(0, 3).map(p => p.label) : [];
+  sessionStorage.setItem('gw_trusted', JSON.stringify({ amount: $('#inAmount').value || '', cues }));
+  location.href = 'trusted.html';
+});
+</script>
+</body>
+</html>
